@@ -12,12 +12,12 @@ func (t Chain) New(genesis Block) Chain {
 	return t
 }
 
-func (t Chain) AddBlock(block Block) Chain {
+func (t *Chain) AddBlock(block Block) *Chain {
 	t.Blocks = append(t.Blocks, block)
 
 	return t
 }
 
-func (t Chain) GetLast() Block {
+func (t *Chain) GetLast() Block {
 	return t.Blocks[len(t.Blocks) - 1]
 }

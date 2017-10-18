@@ -13,11 +13,11 @@ type Block struct {
 	Index int
 	Kekspace interface{}
 	Timestamp int64
-	Data []byte
+	Data interface{}
 	Hash []byte
 }
 
-func (b Block) New(ks interface{}, data []byte, pHash string, index int) Block {
+func (b Block) New(ks interface{}, data interface{}, pHash string, index int) Block {
 	b.PrevHash = pHash
 	b.Index = index
 	b.Timestamp = time.Now().Unix()
