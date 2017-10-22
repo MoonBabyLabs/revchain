@@ -19,7 +19,7 @@ type Block struct {
 
 func (b Block) New(ks interface{}, data interface{}, pHash string, index int) Block {
 	b.PrevHash = pHash
-	b.Index = index
+	b.Index = index + 1
 	b.Timestamp = time.Now().Unix()
 	b.Kekspace = ks
 	b.Data = data
