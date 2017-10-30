@@ -9,12 +9,12 @@ import (
 )
 
 type Block struct {
-	PrevHash string
-	Index int
-	Kekspace interface{}
-	Timestamp int64
-	Data interface{}
-	Hash []byte
+	PrevHash string `json:"prev_hash"`
+	Index int `json:"index"`
+	Kekspace interface{} `json:"kekspace"`
+	Timestamp int64 `json:"timestamp"`
+	Data interface{} `json:"data"`
+	Hash string `json:"hash"`
 }
 
 func (b Block) New(ks interface{}, data interface{}, pHash string, index int) Block {
@@ -23,7 +23,7 @@ func (b Block) New(ks interface{}, data interface{}, pHash string, index int) Bl
 	b.Timestamp = time.Now().Unix()
 	b.Kekspace = ks
 	b.Data = data
-	b.Hash = b.GenHash(b)
+	b.Hash = b.HashString()
 
 	return b
 }
