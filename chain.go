@@ -10,13 +10,12 @@ type Chain struct {
 	Blocks []Block `json:"blocks"`
 	CurHash string `json:"current_hash"`
 	Index int `json:"index"`
-	Structure map[string]string `json:"structure"`
 }
 
 type ChainMaker interface {
-	New(itemId string, data interface{}) (ChainMaker, error)
+	New(itemId string, data map[string]interface{}) (ChainMaker, error)
 	GetHashString() string
-	AddBlock(itemId string, data interface{}) (ChainMaker, error)
+	AddBlock(itemId string, addData map[string]interface{}, modifyData map[string]interface{}, deleteData map[string]interface{}) (ChainMaker, error)
 	Load(path string) (ChainMaker, error)
 	Delete(id string) error
 	GetBlocks() []Block
@@ -32,16 +31,16 @@ func (t Chain) GetBlocks() []Block {
 	return t.Blocks
 }
 
-func (t Chain) AddBlock(id string, data interface{}) (ChainMaker, error) {
+func (t Chain) AddBlock(id string, addData map[string]interface{}, modifyData map[string]interface{}, deleteData map[string]interface{}) (ChainMaker, error) {
 	space, spErr := kekspace.Kekspace{}.Load()
 
 	if spErr != nil {
 		return t, spErr
 	}
 
-	block := Block{}.New(space.KekId, data, t.CurHash, t.Index + 1)
+	block := Block{}.New(space.KekId, addData, modifyData, deleteData, t.CurHash, t.Index + 1)
 	t.CurHash = block.Hash
-	t.Index = block.Index
+	t.Index = block.Index + 1
 	t.Blocks = append(t.Blocks, block)
 	t.store.Save(KEK_PATH + id + ".kek", t)
 
@@ -54,7 +53,7 @@ func (t Chain) SetStore(store kekstore.Storer) Chain {
 	return t
 }
 
-func (t Chain) New(id string, data interface{}) (ChainMaker, error) {
+func (t Chain) New(id string, data map[string]interface{}) (ChainMaker, error) {
 	space, spaceErr := kekspace.Kekspace{}.Load()
 
 	if spaceErr != nil {
@@ -65,7 +64,7 @@ func (t Chain) New(id string, data interface{}) (ChainMaker, error) {
 		t.store = kekstore.Store{}
 	}
 
-	block := Block{}.New(space.KekId, data, "", 0)
+	block := Block{}.New(space.KekId, data, map[string]interface{}{}, map[string]interface{}{},"", 0)
 	t.Blocks = []Block{block}
 	t.Index = 0
 	t.CurHash = block.Hash

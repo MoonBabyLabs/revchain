@@ -8,21 +8,33 @@ import (
 	"time"
 )
 
+type BlockData struct {
+	Add map[string]interface{} `json:"add"`
+	Modify map[string]interface{} `json:"modify"`
+	Delete map[string]interface{} `json:"delete"`
+}
+
+type Signature struct {
+	Token string `json:"token"`
+	Source string `json:"string"`
+}
+
 type Block struct {
 	PrevHash string `json:"prev_hash"`
 	Index int `json:"index"`
-	Kekspace interface{} `json:"kekspace"`
+	Kekspace interface{} `json:"space"`
 	Timestamp int64 `json:"timestamp"`
-	Data interface{} `json:"data"`
+	Data BlockData `json:"data"`
 	Hash string `json:"hash"`
+	Signature Signature `json:"signature"`
 }
 
-func (b Block) New(ks interface{}, data interface{}, pHash string, index int) Block {
+func (b Block) New(ks interface{}, addData map[string]interface{}, modifyData map[string]interface{}, deleteData map[string]interface{}, pHash string, index int) Block {
 	b.PrevHash = pHash
 	b.Index = index + 1
 	b.Timestamp = time.Now().Unix()
 	b.Kekspace = ks
-	b.Data = data
+	b.Data = BlockData{Add:addData, Modify:modifyData, Delete:deleteData}
 	b.Hash = b.HashString()
 
 	return b
@@ -30,6 +42,7 @@ func (b Block) New(ks interface{}, data interface{}, pHash string, index int) Bl
 
 func (block Block) isHashValid(hash string) bool {
 	validStart := hash[:2]
+
 	return validStart == "00"
 }
 
